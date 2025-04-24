@@ -1,0 +1,12 @@
+# Ignore Python cache and virtual env
+__pycache__/
+*.pyc
+*.env
+
+# Ignore large model files (tracked by LFS)
+*.h5
+
+# Ignore editor and system files
+.vscode/
+.DS_Store
+Thumbs.db
