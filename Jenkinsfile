@@ -9,30 +9,37 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                // If you are using Jenkins SCM to clone, this can be removed.
-                git credentialsId: 'your-github-credential-id', url: 'https://github.com/yourusername/your-repository.git'
+                // Clone the Git repository using Jenkins SCM
+                git credentialsId: 'GitHub-Token', url: 'https://github.com/SriramAkula/Human-Activity-Recognition-Using-ResNet50.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
+                // Build Docker image from the Dockerfile in the repository
                 sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
         stage('Run Container Tests') {
             steps {
-                // Replace this with actual tests if needed
+                // Placeholder for running tests in the container, if needed
                 sh 'echo "No tests yet. Skipping test stage."'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
+                // Push the Docker image to Docker Hub
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
+                        # Log in to Docker Hub
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        
+                        # Tag the Docker image with the repository and 'latest' tag
                         docker tag $IMAGE_NAME $DOCKERHUB_REPO:latest
+                        
+                        # Push the image to Docker Hub
                         docker push $DOCKERHUB_REPO:latest
                     '''
                 }
