@@ -9,7 +9,8 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                echo 'Code already cloned by Jenkins from GitHub'
+                // If you are using Jenkins SCM to clone, this can be removed.
+                git credentialsId: 'your-github-credential-id', url: 'https://github.com/yourusername/your-repository.git'
             }
         }
 
@@ -21,7 +22,7 @@ pipeline {
 
         stage('Run Container Tests') {
             steps {
-                // Optional: You can skip or replace this with your test command
+                // Replace this with actual tests if needed
                 sh 'echo "No tests yet. Skipping test stage."'
             }
         }
