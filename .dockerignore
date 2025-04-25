@@ -1,6 +1,43 @@
+# Byte-compiled / cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Notebooks
 *.ipynb
+
+# Image samples
 Sample_Images/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs and outputs
+*.log
+*.out
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# Python environments
+venv/
+env/
+*.egg-info/
+
+# Dataset and models (if already baked into image or pulled at runtime)
+*.csv
+*.h5
+
+# Docker and deployment artifacts
+Dockerfile
+docker-compose.yml
+*.tar
+*.zip
+
+# IDE configs
+.vscode/
+.idea/

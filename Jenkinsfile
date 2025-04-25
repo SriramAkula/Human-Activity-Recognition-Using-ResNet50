@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     options {
-        timeout(time: 30, unit: 'MINUTES') // ⏱️ Prevents checkout timeout
+        timeout(time: 30, unit: 'MINUTES') // ⏱️ Prevents long-running builds
     }
 
     environment {
@@ -13,14 +13,12 @@ pipeline {
     stages {
         stage('Clean Workspace') {
             steps {
-                // 🧹 Remove all files from the workspace to avoid .git issues
-                deleteDir()
+                deleteDir() // 🧹 Clean workspace to avoid .git issues
             }
         }
 
         stage('Clone Repo') {
             steps {
-                // ⚡ Faster clone with shallow history
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],
@@ -35,13 +33,20 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                script {
+                    sh 'docker pull $DOCKERHUB_REPO:latest || true' // Use cache if available
+                    sh 'docker build --cache-from=$DOCKERHUB_REPO:latest -t $IMAGE_NAME .'
+                    
+                    def shortCommit = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    env.TAGGED_IMAGE = "${DOCKERHUB_REPO}:${shortCommit}"
+                    sh "docker tag $IMAGE_NAME $TAGGED_IMAGE"
+                }
             }
         }
 
         stage('Run Container Tests') {
             steps {
-                sh 'echo "No tests yet. Skipping test stage."'
+                sh 'echo "No tests yet. Skipping test stage."' // Placeholder
             }
         }
 
@@ -52,9 +57,16 @@ pipeline {
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                         docker tag $IMAGE_NAME $DOCKERHUB_REPO:latest
                         docker push $DOCKERHUB_REPO:latest
+                        docker push $TAGGED_IMAGE
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker system prune -f' // 🧼 Clean up dangling containers/images
         }
     }
 }
