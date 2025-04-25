@@ -1,19 +1,16 @@
-# Base image with TensorFlow pre-installed
-FROM tensorflow/tensorflow:2.15.0 as base
+# Use an official Python image
+FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
 
-# Copy only requirements first (for better caching)
-COPY requirements.txt .
-
-# Install additional dependencies (TensorFlow is already installed)
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application
+# Copy all necessary files
 COPY . .
 
-# Expose the port Flask will use
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Expose port
 EXPOSE 5000
 
 # Run the app
