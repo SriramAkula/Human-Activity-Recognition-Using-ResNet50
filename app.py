@@ -9,10 +9,10 @@ import pandas as pd
 app = Flask(__name__)
 
 # Load trained model
-model = load_model(r'C:\Users\micro\OneDrive\Desktop\DevopsProject\best_model.h5')
+model = load_model('best_model.h5')
 
 # Load class labels
-train_df = pd.read_csv(r'C:\Users\micro\OneDrive\Desktop\DevopsProject\Training_set.csv')
+train_df = pd.read_csv('Training_set.csv')
 class_names = sorted(train_df['label'].unique().tolist())
 
 # Upload folder setup
@@ -54,6 +54,6 @@ def predict():
         'prediction': predicted_class,
         'confidence': f"{confidence:.2f}"
     })
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
+
