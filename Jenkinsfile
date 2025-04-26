@@ -54,5 +54,15 @@ pipeline {
                 }
             }
         }
+                stage('Run Flask App') {
+            steps {
+                bat '''
+                    docker stop flask-container || echo "No container to stop"
+                    docker rm flask-container || echo "No container to remove"
+                    docker run -d -p 5000:5000 --name flask-container %IMAGE_NAME%
+                '''
+            }
+        }
+
     }
 }
