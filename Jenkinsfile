@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     options {
-        timeout(time: 30, unit: 'MINUTES') // ⏱️ Prevents checkout timeout
+        timeout(time: 30, unit: 'MINUTES')
     }
 
     environment {
@@ -31,27 +31,33 @@ pipeline {
             }
         }
 
-        stage('Build Image with Docker Compose') {
+        stage('Build Docker Image') {
             steps {
-                bat 'docker-compose build'
+                bat 'build.bat'
             }
         }
 
-        stage('Run Container Tests') {
+        stage('Run Container for Testing') {
             steps {
-                bat 'docker-compose run --rm web echo Container runs successfully!'
+                bat 'run.bat'
             }
         }
 
-        stage('Tag & Push to Docker Hub') {
+        stage('Push Image to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     bat '''
                         echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
-                        docker tag %IMAGE_NAME% %DOCKERHUB_REPO%:latest
+                        docker tag flask-image-classifier %DOCKERHUB_REPO%:latest
                         docker push %DOCKERHUB_REPO%:latest
                     '''
                 }
+            }
+        }
+
+        stage('Cleanup Container') {
+            steps {
+                bat 'stop.bat'
             }
         }
     }
