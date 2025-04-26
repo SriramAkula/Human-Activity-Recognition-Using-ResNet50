@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  web:
+    image: flask-image-classifier
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app  # Optional: bind code changes in dev
+    restart: unless-stopped

@@ -13,14 +13,12 @@ pipeline {
     stages {
         stage('Clean Workspace') {
             steps {
-                // 🧹 Remove all files from the workspace to avoid .git issues
                 deleteDir()
             }
         }
 
         stage('Clone Repo') {
             steps {
-                // ⚡ Faster clone with shallow history
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],
@@ -33,25 +31,25 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Image with Docker Compose') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                bat 'docker-compose build'
             }
         }
 
         stage('Run Container Tests') {
             steps {
-                sh 'echo "No tests yet. Skipping test stage."'
+                bat 'docker-compose run --rm web echo Container runs successfully!'
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Tag & Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker tag $IMAGE_NAME $DOCKERHUB_REPO:latest
-                        docker push $DOCKERHUB_REPO:latest
+                    bat '''
+                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                        docker tag %IMAGE_NAME% %DOCKERHUB_REPO%:latest
+                        docker push %DOCKERHUB_REPO%:latest
                     '''
                 }
             }
