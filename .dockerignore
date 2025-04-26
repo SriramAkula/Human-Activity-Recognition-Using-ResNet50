@@ -30,7 +30,12 @@ env/
 
 # Dataset and models (if already baked into image or pulled at runtime)
 *.csv
+# Ignore all .h5 files
 *.h5
+
+# But don't ignore best_model.h5
+!best_model.h5
+
 
 # Docker and deployment artifacts
 Dockerfile
