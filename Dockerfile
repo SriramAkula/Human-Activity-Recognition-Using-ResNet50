@@ -5,7 +5,10 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # Copy all necessary files
-COPY . .
+COPY . . 
+
+# Ensure the model file is copied too
+COPY best_model.h5 /app/best_model.h5
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt

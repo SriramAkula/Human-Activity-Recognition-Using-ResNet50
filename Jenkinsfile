@@ -54,7 +54,7 @@ pipeline {
                 }
             }
         }
-                stage('Run Flask App') {
+            stage('Run Flask App') {
             steps {
                 bat '''
                     docker stop flask-container || echo "No container to stop"
